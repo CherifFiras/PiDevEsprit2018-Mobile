@@ -73,8 +73,12 @@ public class MainView {
         session.setParameters("firas", "firas");
         session.initSession();
        
-        
+        initMainView();
         //----------------
+    }
+    
+    private void initMainView()
+    {
         Form mainForm = new Form();
         mainForm.setLayout(new BorderLayout());
         Toolbar toolBar = mainForm.getToolbar();
