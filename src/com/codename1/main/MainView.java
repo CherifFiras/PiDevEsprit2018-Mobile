@@ -28,6 +28,7 @@ import com.codename1.ui.events.ActionEvent;
 import com.codename1.ui.events.ActionListener;
 import com.codename1.ui.layouts.BorderLayout;
 import controller.ForumController;
+import controller.FriendListController;
 import java.net.URISyntaxException;
 
 /**
@@ -142,7 +143,9 @@ public class MainView {
 
             public void actionPerformed(ActionEvent evt) {
                 mainForm.getContentPane().removeAll();
-                mainForm.addComponent(BorderLayout.CENTER, showMyProfile());
+                FriendListController friendListController = new FriendListController();
+                friendListController.initialize();
+                mainForm.addComponent(BorderLayout.CENTER, friendListController.getView());
                 mainForm.revalidate();
             }
         });

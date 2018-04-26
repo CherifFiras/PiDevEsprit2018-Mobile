@@ -9,6 +9,7 @@ package Entity;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -386,4 +387,13 @@ public class User implements Serializable {
         this.messageList = messageList;
     }
     
+    public static User createUser(Map<String,Object> mappedUser)
+    {
+        User user = new User();
+        user.setId((int)Float.parseFloat(mappedUser.get("id").toString()));
+        user.setNom(mappedUser.get("nom").toString());
+        user.setPrenom(mappedUser.get("prenom").toString());
+        user.setImage(mappedUser.get("image").toString());
+        return user;
+    }
 }
