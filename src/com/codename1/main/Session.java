@@ -6,12 +6,17 @@
 package com.codename1.main;
 
 import Entity.User;
+import com.codename1.io.CharArrayReader;
 import com.codename1.io.ConnectionRequest;
+import com.codename1.io.JSONParser;
+import com.codename1.io.NetworkEvent;
 import com.codename1.io.NetworkManager;
 import com.codename1.xml.XMLParser;
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
+import java.util.Map;
 
 /**
  *
@@ -21,7 +26,6 @@ public class Session {
     
     private String username;
     private String password;
-    private User user;
     private static Session session;
     
     private Session()
@@ -29,9 +33,21 @@ public class Session {
         
     }
     
-    public User getConnectedUeser()
+    public User getConnectedUser()
     {
-        return new User();
+        ConnectionRequest con = new ConnectionRequest();
+        con.setUrl("http://127.0.0.1:8888/piintegration/web/app_dev.php/interaction/getmembers");
+        User user = new User();
+        con.addResponseListener((NetworkEvent evt) -> {
+            try {
+                JSONParser jsonp = new JSONParser();
+                Map<String, Object> mapUser = jsonp.parseJSON(new CharArrayReader(new String(con.getResponseData()).toCharArray()));
+                user.setId((int)Float.parseFloat(mapUser.get("id").toString()));
+                user.setNom(mapUser.get("nom").toString());
+            } catch (IOException ex) {
+            }
+        });
+        return user;
     }
     
     public static Session getInstance()
