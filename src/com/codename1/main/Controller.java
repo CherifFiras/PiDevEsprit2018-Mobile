@@ -5,10 +5,20 @@
  */
 package com.codename1.main;
 
+import Entity.User;
 import com.codename1.components.InfiniteProgress;
+import com.codename1.io.CharArrayReader;
+import com.codename1.io.ConnectionRequest;
+import com.codename1.io.JSONParser;
+import com.codename1.io.NetworkEvent;
 import com.codename1.ui.Component;
 import com.codename1.ui.Container;
+import com.codename1.ui.events.ActionListener;
 import com.codename1.ui.layouts.BorderLayout;
+import java.io.IOException;
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -17,6 +27,7 @@ import com.codename1.ui.layouts.BorderLayout;
 public abstract class Controller {
     
     protected Container rootContainer;
+    private static int connectedUserId;
     
     public Controller()
     {
@@ -33,6 +44,29 @@ public abstract class Controller {
     public Component getView()
     {
         return rootContainer;
+    }
+    
+    public static void setConnectedUserId(int id)
+    {
+        connectedUserId = id;
+    }
+    
+    public User getConnectedUser()
+    {
+        ConnectionRequest con = new ConnectionRequest();
+        con.setUrl("http://127.0.0.1:8888/piintegration/web/app_dev.php/interaction/getmembers");
+        User user = new User();
+        con.addResponseListener((NetworkEvent evt) -> {
+            try {
+                JSONParser jsonp = new JSONParser();
+                Map<String, Object> mapUser = jsonp.parseJSON(new CharArrayReader(new String(con.getResponseData()).toCharArray()));
+                user.setId((int)Float.parseFloat(mapUser.get("id").toString()));
+                user.setNom(mapUser.get("nom").toString());
+            } catch (IOException ex) {
+                Logger.getLogger(Controller.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        });
+        return user;
     }
     
 }

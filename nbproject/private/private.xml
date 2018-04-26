@@ -4,16 +4,10 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/G:/PiDev/Sprint3/PiDevEsprit2018-Mobile/src/Entity/sujet.java</file>
+            <file>file:/G:/PiDev/Sprint3/PiDevEsprit2018-Mobile/src/com/codename1/main/Session.java</file>
+            <file>file:/G:/PiDev/Sprint3/PiDevEsprit2018-Mobile/src/com/codename1/main/Controller.java</file>
             <file>file:/G:/PiDev/Sprint3/PiDevEsprit2018-Mobile/src/controller/ForumController.java</file>
             <file>file:/G:/PiDev/Sprint3/PiDevEsprit2018-Mobile/src/com/codename1/main/MainView.java</file>
-            <file>file:/G:/PiDev/Sprint3/PiDevEsprit2018-Mobile/src/Entity/User.java</file>
-            <file>file:/G:/PiDev/Sprint3/PiDevEsprit2018-Mobile/src/Entity/favoris.java</file>
-            <file>file:/G:/PiDev/Sprint3/PiDevEsprit2018-Mobile/src/Entity/Message.java</file>
-            <file>file:/G:/PiDev/Sprint3/PiDevEsprit2018-Mobile/src/com/codename1/main/Controller.java</file>
-            <file>file:/G:/PiDev/Sprint3/PiDevEsprit2018-Mobile/src/Entity/Category.java</file>
-            <file>file:/G:/PiDev/Sprint3/PiDevEsprit2018-Mobile/src/Entity/Notification.java</file>
-            <file>file:/G:/PiDev/Sprint3/PiDevEsprit2018-Mobile/src/Entity/Evenement.java</file>
         </group>
     </open-files>
 </project-private>
