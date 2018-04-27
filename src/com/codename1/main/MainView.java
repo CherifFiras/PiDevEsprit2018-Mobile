@@ -46,7 +46,7 @@ public class MainView {
         updateNetworkThreadCount(2);
 
         theme = UIManager.initFirstTheme("/theme");
-
+        Controller.theme = theme;
         // Enable Toolbar on all Forms by default
         Toolbar.setGlobalToolbar(true);
 

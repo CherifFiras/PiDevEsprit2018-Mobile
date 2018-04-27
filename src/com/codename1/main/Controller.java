@@ -15,6 +15,7 @@ import com.codename1.ui.Component;
 import com.codename1.ui.Container;
 import com.codename1.ui.events.ActionListener;
 import com.codename1.ui.layouts.BorderLayout;
+import com.codename1.ui.util.Resources;
 import java.io.IOException;
 import java.util.Map;
 
@@ -25,6 +26,7 @@ import java.util.Map;
 public abstract class Controller {
     
     protected Container rootContainer;
+    public static Resources theme;
     
     public Controller()
     {
