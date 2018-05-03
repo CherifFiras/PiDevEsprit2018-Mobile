@@ -27,6 +27,7 @@ public abstract class Controller {
     
     protected Container rootContainer;
     public static Resources theme;
+    public static String ip = "http://127.0.0.1:8888";
     
     public Controller()
     {

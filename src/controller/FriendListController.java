@@ -20,7 +20,10 @@ import com.codename1.ui.events.ActionListener;
 import com.codename1.ui.layouts.BorderLayout;
 import com.codename1.ui.layouts.BoxLayout;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import service.ChatListener;
 import service.RelationService;
 import service.UtilService;
 
@@ -35,20 +38,28 @@ public class FriendListController extends Controller {
     private UtilService utilService = UtilService.getInstance();
     private RelationService relationService = RelationService.getInstance();
     private Session session = Session.getInstance();
-    private List<Label> openedTabs;
-    
+    private Map<Integer,ChatController> chatControllerList;
+    private Map<Integer,User> chatUserList;
+    private int selectedUser;
     @Override
     public void initialize() {
-        openedTabs = new ArrayList<>();
+        chatControllerList = new HashMap<>();
+        chatUserList = new HashMap<>();
         this.rootContainer.removeAll();
         ContainerList = new Container(BoxLayout.y());
         List<Relation> relations = relationService.fetchMembers();
         for(Relation relation:relations)
         {
             if(relation.getAcceptor().getId().equals(session.getConnectedUser().getId()))
+            {
                 ContainerList.add(friendListItem(relation.getRequester()));
+                chatUserList.put(relation.getRequester().getId(), relation.getRequester());
+            }
             else
+            {
                 ContainerList.add(friendListItem(relation.getAcceptor()));
+                chatUserList.put(relation.getAcceptor().getId(), relation.getAcceptor());
+            }
         }
         this.rootContainer.add(BorderLayout.WEST,ContainerList);
         initFriendListTab();
@@ -74,38 +85,55 @@ public class FriendListController extends Controller {
     private void itemAction(ActionEvent evt)
     {
         Label userImage = (Label) evt.getSource();
-        if(openedTabs.contains(userImage))
+        int userId = Integer.parseInt(userImage.getUIID());
+        ChatController chatController;
+        if(chatControllerList.get(userId) != null)
         {
-            
+            if(selectedUser== userId) return;
+            chatController = chatControllerList.get(userId);
+            this.rootContainer.add(BorderLayout.WEST,chatController.getView());
+            selectedUser = userId;
         }
         else
         {
-            tabContainer.add(userImage.getIcon().scaled(64, 64));
-            openedTabs.add(userImage);
+            chatController = new ChatController();
+            selectedUser = userId;
+            chatController.initialize();
+            chatController.setFriendUser(chatUserList.get(userId));
+            chatController.loadMessages();
+            ChatListener.addController(chatController);
+            chatControllerList.put(userId, chatController);
+            this.rootContainer.add(BorderLayout.WEST,chatController.getView());
+            addUserImageToTab(userImage);
         }
-        tabContainer.revalidate();
+        this.rootContainer.revalidate();
     }
     
+    private void addUserImageToTab(Label userImage)
+    {
+        Label tabLabel = new Label(userImage.getIcon().scaled(64, 64));
+        tabLabel.setUIID(userImage.getUIID());
+        tabLabel.addPointerPressedListener(this::itemAction);
+        tabContainer.add(tabLabel);
+        tabContainer.revalidate();
+    }
     
     private void initFriendListTab()
     {
         tabContainer = new Container(BoxLayout.x());
         Label chatImage = new Label(theme.getImage("chatc.png").scaled(64, 64));
+        chatImage.setUIID("0");
         chatImage.addPointerPressedListener((ActionListener) (ActionEvent evt) -> {
+            int id = Integer.parseInt(((Label)evt.getSource()).getUIID());
+            if(id == selectedUser)return;
+            selectedUser= id;
             this.rootContainer.add(BorderLayout.WEST,ContainerList);
             this.rootContainer.revalidate();
         });
         tabContainer.add(chatImage);
-        Label line = new Label("\u0000") {
-            public void paint(Graphics g) {
-                super.paint(g);
-                g.drawLine(getX(), getY() + getHeight() - 1, getX() + getWidth(), getY() + getHeight() - 1);
-            }
-        };
         Container parentContainer = new Container(BoxLayout.y());
         tabContainer.getUnselectedStyle().setBgColor(0x000000);
         parentContainer.add(tabContainer);
-        parentContainer.add(line);
         this.rootContainer.add(BorderLayout.NORTH, parentContainer);
     }
     

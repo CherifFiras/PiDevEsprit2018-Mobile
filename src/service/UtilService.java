@@ -7,6 +7,7 @@ package service;
 
 import com.codename1.io.ConnectionRequest;
 import com.codename1.io.NetworkManager;
+import com.codename1.main.Controller;
 import com.codename1.ui.Image;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -31,7 +32,7 @@ public class UtilService {
     {
         try {
             ConnectionRequest request = new ConnectionRequest();
-            request.setUrl("http://127.0.0.1:8888/PiDevEsprit2018-Desktop/src/Images/"+url);
+            request.setUrl(Controller.ip+"/PiDevEsprit2018-Desktop/src/Images/"+url);
             NetworkManager.getInstance().addToQueueAndWait(request);
             Image image = Image.createImage(new ByteArrayInputStream(request.getResponseData()));
             return image.scaled(64, 64);

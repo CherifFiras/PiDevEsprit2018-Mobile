@@ -6,6 +6,11 @@
 package Entity;
 
 
+import com.codename1.io.Externalizable;
+import com.codename1.io.Util;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
@@ -16,7 +21,7 @@ import java.util.Map;
  * @author hero
  */
 
-public class User implements Serializable {
+public class User implements Serializable,Externalizable {
     private Integer id;
     private String username;
     private String usernameCanonical;
@@ -391,9 +396,42 @@ public class User implements Serializable {
     {
         User user = new User();
         user.setId((int)Float.parseFloat(mappedUser.get("id").toString()));
-        user.setNom(mappedUser.get("nom").toString());
-        user.setPrenom(mappedUser.get("prenom").toString());
-        user.setImage(mappedUser.get("image").toString());
+        if(mappedUser.get("nom") != null)
+            user.setNom(mappedUser.get("nom").toString());
+        if(mappedUser.get("prenom") != null)
+            user.setPrenom(mappedUser.get("prenom").toString());
+        if(mappedUser.get("image") != null)
+            user.setImage(mappedUser.get("image").toString());
+        if(mappedUser.get("password") != null)
+            user.setPassword(mappedUser.get("password").toString());
         return user;
+    }
+
+    @Override
+    public int getVersion() {
+        return 1 ;
+    }
+
+    @Override
+    public void externalize(DataOutputStream out) throws IOException {
+        Util.writeObject(id, out);
+        Util.writeObject(nom, out);
+        Util.writeObject(prenom, out);
+        Util.writeObject(salt, out);
+        Util.writeObject(image, out);
+    }
+
+    @Override
+    public void internalize(int version, DataInputStream in) throws IOException {
+        id = (Integer) Util.readObject(in);
+        nom = (String) Util.readObject(in);
+        prenom = (String) Util.readObject(in);
+        salt = (String) Util.readObject(in);
+        image = (String) Util.readObject(in);
+    }
+
+    @Override
+    public String getObjectId() {
+        return "User";
     }
 }

@@ -12,7 +12,7 @@ import com.codename1.io.ConnectionRequest;
 import com.codename1.io.JSONParser;
 import com.codename1.io.NetworkEvent;
 import com.codename1.io.NetworkManager;
-import com.codename1.ui.events.ActionListener;
+import com.codename1.main.Controller;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -39,7 +39,7 @@ public class RelationService {
     {
         List<Relation> relations = new ArrayList<>();
         ConnectionRequest request = new ConnectionRequest();
-        request.setUrl("http://127.0.0.1:8888/piintegration/web/app_dev.php/interaction/getmembers");
+        request.setUrl(Controller.ip+"/piintegration/web/app_dev.php/interaction/getmembers");
         request.addResponseListener((NetworkEvent evt) -> {
             try {
                 JSONParser jsonp = new JSONParser();
