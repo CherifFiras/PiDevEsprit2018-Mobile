@@ -5,6 +5,7 @@
  */
 package service;
 
+import Entity.Demande;
 import Entity.Relation;
 import Entity.User;
 import com.codename1.io.CharArrayReader;
@@ -59,5 +60,23 @@ public class RelationService {
         });
         NetworkManager.getInstance().addToQueueAndWait(request);
         return relations;
+    }
+    
+    public void acceptDemande(Demande demande)
+    {
+        ConnectionRequest request = new ConnectionRequest();
+        request.setUrl(Controller.ip+"/piintegration/web/app_dev.php/interaction/acceptdemande");
+        request.addArgument("demande", demande.getId().toString());
+        request.addArgument("user", demande.getRequester().getId().toString());
+        NetworkManager.getInstance().addToQueueAndWait(request);
+    }
+    
+    public void rejectDemande(Demande demande)
+    {
+        ConnectionRequest request = new ConnectionRequest();
+        request.setUrl(Controller.ip+"/piintegration/web/app_dev.php/interaction/rejectdemande");
+        request.addArgument("demande", demande.getId().toString());
+        request.addArgument("user", demande.getRequester().getId().toString());
+        NetworkManager.getInstance().addToQueueAndWait(request);
     }
 }

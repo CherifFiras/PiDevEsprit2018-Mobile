@@ -71,4 +71,52 @@ public class MessageService {
         return messages;
     }
     
+    public void createMessageNotification(Message message)
+    {
+        ConnectionRequest request = new ConnectionRequest();
+        request.setUrl(Controller.ip+"/piintegration/web/app_dev.php/interaction/sendmessage");
+        request.addArgument("text", message.getText());
+        request.addArgument("touser", message.getReceiver().getId().toString());
+        NetworkManager.getInstance().addToQueueAndWait(request);
+    }
+    
+    public List<Message> getNotificatedMessages(String[] ids)
+    {
+        List<Message> messages = new ArrayList<>();
+        if(ids.length==0)
+            return messages;
+        ConnectionRequest request = new ConnectionRequest();
+        request.setUrl(Controller.ip+"/piintegration/web/app_dev.php/interaction/getallmessages");
+        request.addArgument("mids", ids);
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+        request.addResponseListener((NetworkEvent evt) -> {
+            try {
+                JSONParser jsonp = new JSONParser();
+                List<Map<String, Object>> mappedList = (List<Map<String, Object>>) jsonp.parseJSON(new CharArrayReader(new String(request.getResponseData()).toCharArray())).get("root");
+                for(Map<String,Object> obj:mappedList)
+                {
+                    Map<String,Object> mappedMessage = (Map<String,Object>) obj.get("0");
+                    Message message = new Message();
+                    message.setId((int)Float.parseFloat(mappedMessage.get("id").toString()));
+                    User sender = User.createUser((Map<String,Object>) mappedMessage.get("sender"));
+                    sender.setNom(obj.get("nom").toString());
+                    sender.setPrenom(obj.get("prenom").toString());
+                    sender.setImage(obj.get("image").toString());
+                    User receiver = User.createUser((Map<String,Object>) mappedMessage.get("receiver"));
+                    message.setSender(sender);
+                    message.setReceiver(receiver);
+                    message.setText(mappedMessage.get("text").toString());
+                    try {
+                        message.setDate(dateFormat.parse(mappedMessage.get("date").toString()));
+                    } catch (ParseException ex) {
+                    }
+                    messages.add(message);
+                }
+            } catch (IOException ex) {
+            }
+        });
+        NetworkManager.getInstance().addToQueueAndWait(request);
+        return messages;
+    }
+    
 }

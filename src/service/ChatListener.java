@@ -17,6 +17,7 @@ public class ChatListener implements Runnable{
     private static DataInputStream inputStream;
     private static DataOutputStream outputStream;
     private static User user;
+    private final MessageService messageService = MessageService.getInstance();
     public ChatListener(String hostname, int port,User user) {
         com.codename1.io.Util.register("User", User.class);
         com.codename1.io.Util.register("Message", Message.class);
@@ -56,8 +57,8 @@ public class ChatListener implements Runnable{
                             System.out.println(controller.getChatUser());
                             controller.addToChat(message);
                         }
-    //              else
-    //                  NotificationApi.createMessageNotification(message);
+                        else
+                            messageService.createMessageNotification(message);
                     }
                 } catch (IOException ex) {
                 }

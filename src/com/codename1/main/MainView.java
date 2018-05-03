@@ -32,10 +32,9 @@ import com.codename1.util.EasyThread;
 import controller.Beblio;
 import controller.ForumController;
 import controller.FriendListController;
+import controller.NotificationController;
 import controller.SignUpController;
-import java.io.UnsupportedEncodingException;
 import java.net.URISyntaxException;
-import org.mindrot.jbcrypt.BCrypt;
 import service.ChatListener;
 
 /**
@@ -195,20 +194,26 @@ public class MainView {
         EasyThread thread = EasyThread.start("chat");
         thread.run(chatListener);
         Form mainForm = new Form();
+        NotificationController notificationController = new NotificationController();
+        notificationController.setForm(mainForm);
+        notificationController.initialize();
         mainForm.setLayout(new BorderLayout());
         Toolbar toolBar = mainForm.getToolbar();
-        
         toolBar.addCommandToRightBar("",theme.getImage("notifDemande.png"), (ActionListener) (ActionEvent evt) -> {
-            
+            mainForm.getContentPane().removeAll();
+            mainForm.addComponent(BorderLayout.CENTER, notificationController.getDemandeNotificationView());
+            mainForm.revalidate();
         });
         toolBar.addCommandToRightBar("",theme.getImage("notifMessage.png"), (ActionListener) (ActionEvent evt) -> {
-            
+            mainForm.getContentPane().removeAll();
+            mainForm.addComponent(BorderLayout.CENTER, notificationController.getMessageNotificationView());
+            mainForm.revalidate();
         });
         toolBar.addCommandToRightBar("",theme.getImage("notifAccept.png"), (ActionListener) (ActionEvent evt) -> {
-            
+            mainForm.getContentPane().removeAll();
+            mainForm.addComponent(BorderLayout.CENTER, notificationController.getAcceptNotificationView());
+            mainForm.revalidate();
         });
-
-        
         final Command profileCommand = new Command("Mon Profil") {
 
             public void actionPerformed(ActionEvent evt) {
