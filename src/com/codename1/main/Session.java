@@ -17,6 +17,9 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -113,6 +116,52 @@ public class Session {
         NetworkManager.getInstance().addToQueueAndWait(con);
         user = list.get(0);
         return list.get(0);
+    }
+    
+	public User getFullConnectedUser()
+    {
+        ConnectionRequest con = new ConnectionRequest();
+        con.setUrl(Controller.ip+"/piintegration/web/app_dev.php/interaction/user");
+        User user = new User();
+        con.addResponseListener((NetworkEvent evt) -> {
+            try {
+                JSONParser jsonp = new JSONParser();
+                Map<String, Object> mapUser =  jsonp.parseJSON(new CharArrayReader(new String(con.getResponseData()).toCharArray()));
+                user.setId((int)Float.parseFloat(mapUser.get("id").toString()));
+                user.setNom(mapUser.get("nom").toString());
+                user.setPrenom(mapUser.get("prenom").toString());                
+                DateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+                try {
+                    user.setDateNaissance(format.parse(mapUser.get("dateNaissance").toString()));
+                } catch (ParseException ex) {                           
+                }                
+                user.setGenre(mapUser.get("genre").toString());
+                user.setEmail(mapUser.get("email").toString());
+                user.setTel(mapUser.get("tel").toString());
+                user.setPays(mapUser.get("pays").toString());
+                user.setVille(mapUser.get("ville").toString());
+                user.setRegion(mapUser.get("region").toString());
+                user.setPlaceNaiss(mapUser.get("placeNaiss").toString());
+                user.setReligion(mapUser.get("relegion").toString());
+                user.setApropos(mapUser.get("apropos").toString());
+                if(mapUser.get("facebook") != null)
+                    user.setFacebook(mapUser.get("facebook").toString());
+                if(mapUser.get("twitter") != null)
+                    user.setTwitter(mapUser.get("twitter").toString());
+                if(mapUser.get("instagram") != null)
+                    user.setInstagram(mapUser.get("instagram").toString());
+                user.setOccupation(mapUser.get("occupation").toString());                
+                try {
+                    user.setLastLogin(format.parse(mapUser.get("lastLogin").toString()));
+                } catch (ParseException ex) {                           
+                } 
+                
+                user.setImage(mapUser.get("image").toString());
+            } catch (IOException ex) {
+            }
+        });
+        NetworkManager.getInstance().addToQueueAndWait(con);
+        return user;
     }
     
 }

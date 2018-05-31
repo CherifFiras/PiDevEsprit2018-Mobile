@@ -40,7 +40,8 @@ public class FriendListController extends Controller {
     private Session session = Session.getInstance();
     private Map<Integer,ChatController> chatControllerList;
     private Map<Integer,User> chatUserList;
-    private int selectedUser;
+    private static int selectedUser = 0;
+    private Container parentContainer;
     @Override
     public void initialize() {
         chatControllerList = new HashMap<>();
@@ -65,6 +66,12 @@ public class FriendListController extends Controller {
         initFriendListTab();
         this.rootContainer.revalidate();
     }
+
+    public static int getSelectedUser() {
+        return selectedUser;
+    }
+    
+    
     
     private Component friendListItem(User user)
     {
@@ -97,6 +104,8 @@ public class FriendListController extends Controller {
         else
         {
             chatController = new ChatController();
+            chatController.setFriendListController(this);
+            chatController.setImageLabel(userImage);
             selectedUser = userId;
             chatController.initialize();
             chatController.setFriendUser(chatUserList.get(userId));
@@ -108,7 +117,7 @@ public class FriendListController extends Controller {
         }
         this.rootContainer.revalidate();
     }
-    
+     
     private void addUserImageToTab(Label userImage)
     {
         Label tabLabel = new Label(userImage.getIcon().scaled(64, 64));
@@ -116,6 +125,18 @@ public class FriendListController extends Controller {
         tabLabel.addPointerPressedListener(this::itemAction);
         tabContainer.add(tabLabel);
         tabContainer.revalidate();
+    }
+    
+    public void returnToTab(Label label,int id)
+    {
+        chatControllerList.remove(id);
+        tabContainer.removeComponent(label);
+        tabContainer.revalidate();
+        parentContainer.revalidate();
+        this.rootContainer.revalidate();
+        selectedUser= 0;
+        this.rootContainer.add(BorderLayout.WEST,ContainerList);
+        this.rootContainer.revalidate();
     }
     
     private void initFriendListTab()
@@ -126,12 +147,12 @@ public class FriendListController extends Controller {
         chatImage.addPointerPressedListener((ActionListener) (ActionEvent evt) -> {
             int id = Integer.parseInt(((Label)evt.getSource()).getUIID());
             if(id == selectedUser)return;
-            selectedUser= id;
+            selectedUser= 0;
             this.rootContainer.add(BorderLayout.WEST,ContainerList);
             this.rootContainer.revalidate();
         });
         tabContainer.add(chatImage);
-        Container parentContainer = new Container(BoxLayout.y());
+        parentContainer = new Container(BoxLayout.y());
         tabContainer.getUnselectedStyle().setBgColor(0x000000);
         parentContainer.add(tabContainer);
         this.rootContainer.add(BorderLayout.NORTH, parentContainer);

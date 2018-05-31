@@ -39,6 +39,8 @@ public class ChatController extends Controller{
     private Container sendZone;
     private Container barZone;
     private final MessageService messageService = MessageService.getInstance();
+    private FriendListController friendListController;
+    private Label imageLabel;
     TextField textField;
     Font chatFont;
     @Override
@@ -47,6 +49,9 @@ public class ChatController extends Controller{
         currentUser = Session.getInstance().getConnectedUser();
         chatFont = Font.createSystemFont(Font.FACE_PROPORTIONAL, Font.STYLE_PLAIN, Font.SIZE_MEDIUM);
         Label exitButton = new Button("Quitter");
+        exitButton.addPointerPressedListener((ActionListener) (ActionEvent evt) -> {
+            friendListController.returnToTab(imageLabel,friendUser.getId());
+        });
         chatZone = new Container(BoxLayout.y());
         //chatZone.getUnselectedStyle().setBorder(RoundRectBorder.createLineBorder(1),true);
         chatZone.setScrollableY(true);
@@ -61,6 +66,11 @@ public class ChatController extends Controller{
         initSendZone();
     }
 
+    public void setImageLabel(Label label)
+    {
+        imageLabel = label;
+    }
+    
     private void initSendZone()
     {
         textField = new TextField();
@@ -69,6 +79,11 @@ public class ChatController extends Controller{
         sendButton.addActionListener(this::send);
         sendZone.addAll(textField,sendButton);
         this.rootContainer.add(BorderLayout.SOUTH,sendZone);
+    }
+    
+    public void setFriendListController(FriendListController controller)
+    {
+        friendListController = controller;
     }
     
     public void loadMessages()

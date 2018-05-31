@@ -36,6 +36,7 @@ if (isset($_GET['uid'])) {
 		$login["nom"] = $row["nom"];
 		$login["prenom"] = $row["prenom"];
 		$login["id"] = $row["id"];
+		$login["image"] = $row["image"];
 
         // push single login into final response array
         array_push($response["info"], $login);

@@ -11,6 +11,9 @@ import com.codename1.ui.Form;
 import com.codename1.ui.TextComponent;
 import com.codename1.ui.layouts.BorderLayout;
 import com.codename1.ui.layouts.TextModeLayout;
+import com.codename1.ui.validation.LengthConstraint;
+import com.codename1.ui.validation.RegexConstraint;
+import com.codename1.ui.validation.Validator;
 import service.SujetService;
 
 /**
@@ -58,7 +61,11 @@ v.ajouter(title.getText(),description.getText());
 
 });
 
-
+  Validator valid = new Validator();
+        valid.addConstraint(title, new LengthConstraint(1)).addConstraint(price, new LengthConstraint(1))
+                .addConstraint(location, new LengthConstraint(8)).addConstraint(description, new LengthConstraint(1));
+        valid.addSubmitButtons(btn);
+        valid.setShowErrorMessageForFocusedComponent(true);
 
 
         

@@ -27,6 +27,9 @@ import com.codename1.ui.layouts.FlowLayout;
 import com.codename1.ui.layouts.GridLayout;
 import com.codename1.ui.plaf.UIManager;
 import com.codename1.ui.util.Resources;
+import com.codename1.ui.validation.LengthConstraint;
+import com.codename1.ui.validation.RegexConstraint;
+import com.codename1.ui.validation.Validator;
 import java.io.IOException;
 
 
@@ -38,6 +41,8 @@ import java.io.IOException;
 public class SignUpController extends Controller {
 
 private Resources theme;
+Image imgins = null;
+String imgUpPath;
 
    
     public SignUpController  ()
@@ -64,6 +69,7 @@ private Resources theme;
         photobutton.setUIID("SignUpPhotoButton");
         north.addComponent(photobutton);
         
+        
         photobutton.addActionListener(new ActionListener() {
         Form mainForm = new Form();
        
@@ -71,11 +77,15 @@ private Resources theme;
             public void actionPerformed(ActionEvent evt) {
                
              String i=   Capture.capturePhoto(Display.getInstance().getDisplayWidth(),-1);
+             imgUpPath = i;
              if(i != null)
              {
                  Image img;
                  try {
                      img = Image.createImage(i);
+                     img = img.scaled(100, 100);
+                     imgins = img;
+                     photobutton.setIcon(img);
                      
                  } catch (IOException ex) {
                   
@@ -143,32 +153,30 @@ private Resources theme;
        
             @Override
             public void actionPerformed(ActionEvent evt) {
-               if (firstname.getText().isEmpty())
-               { Dialog.show("Error", "Nom invalide !", "Ok", null); }
-               else if (lastname.getText().isEmpty())
-               {Dialog.show("Error", "Prenom invalide !", "Ok", null);} 
-               else if (password.getText().isEmpty())
-               {Dialog.show("Error", "Mot de passe vide !", "Ok", null);} 
-               else if (email.getText().isEmpty())
-               {Dialog.show("Error", "Email Incorrect  !", "Ok", null);} 
-               else {
-                  
+               
                    mainForm.setLayout(new BorderLayout());
                 mainForm.getContentPane().removeAll();
+                //---
+                
+                //---
                 ajouter_compteController forumController = new ajouter_compteController();
-                forumController.add_user(firstname.getText(), password.getText(), firstname.getText(),email.getText(), lastname.getText());
+                forumController.add_user(firstname.getText(), password.getText(), firstname.getText(),email.getText(), lastname.getText(),imgUpPath);
                 MainView m = new MainView();
                 
                  m.start();
                  
                 
-               }
+               
     
             }
           
         });
   
- 
+        Validator valid = new Validator();
+        valid.addConstraint(firstname, new LengthConstraint(1)).addConstraint(lastname, new LengthConstraint(1))
+                .addConstraint(email, RegexConstraint.validEmail()).addConstraint(phonenumber, new LengthConstraint(8)).addConstraint(password, new LengthConstraint(1));
+        valid.addSubmitButtons(getstarted);
+        valid.setShowErrorMessageForFocusedComponent(true);
         this.rootContainer.revalidate();
     }
     

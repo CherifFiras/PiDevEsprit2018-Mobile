@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
+import service.ChatListener;
 import service.MessageService;
 import service.NotificationService;
 import service.RelationService;
@@ -58,6 +59,8 @@ public class NotificationController extends Controller {
     private Container demandeItemsList;
     private Container acceptItemsList;
     private Container messageItemsList;
+    private List<Message> messageList;
+    private boolean show;
     
     @Override
     public void initialize() {
@@ -96,14 +99,14 @@ public class NotificationController extends Controller {
                 }
                 if(acceptNotifCount > 0)
                 {
-                    if(selectedContainer.equals(acceptItemsList))
+                    if(selectedContainer != null && selectedContainer.equals(acceptItemsList))
                     {
                         getAcceptNotificationView();
                         form.revalidate();
                     }
                     else
                     {
-                        if(!selectedContainer.equals(acceptItemsList)&&Dialog.show("Accept", "un personne accptait votre demande", "voir notification", "fermer"))
+                        if(Dialog.show("Accept", "un personne accptait votre demande", "voir notification", "fermer"))
                         {
                             selectedContainer = acceptItemsList;
                             form.getContentPane().removeAll();
@@ -114,14 +117,14 @@ public class NotificationController extends Controller {
                 }
                 if(demandeNotifCount > 0)
                 {
-                    if(selectedContainer.equals(demandeItemsList))
+                    if(selectedContainer != null && selectedContainer.equals(demandeItemsList))
                     {
                         getDemandeNotificationView();
                         form.revalidate();
                     }
                     else
                     {
-                        if(!selectedContainer.equals(demandeItemsList)&&Dialog.show("Demande", "un personne vous envoyait une demande", "voir notification", "fermer"))
+                        if(Dialog.show("Demande", "un personne vous envoyait une demande", "voir notification", "fermer"))
                         {
                             selectedContainer = demandeItemsList;
                             form.getContentPane().removeAll();
@@ -132,14 +135,15 @@ public class NotificationController extends Controller {
                 }
                 if(messageNotifCount > 0)
                 {
-                    if(selectedContainer.equals(messageItemsList))
+                    refreshChat();
+                    if(selectedContainer != null && selectedContainer.equals(messageItemsList))
                     {
                     getMessageNotificationView();
                     form.revalidate();
                     }
                     else
                     {
-                        if(!selectedContainer.equals(messageItemsList)&&Dialog.show("Message", "un personne vous envoyait un message", "voir notification", "fermer"))
+                        if(show && Dialog.show("Message", "un personne vous envoyait un message", "voir notification", "fermer"))
                         {
                             selectedContainer = messageItemsList;
                             form.getContentPane().removeAll();
@@ -152,6 +156,23 @@ public class NotificationController extends Controller {
             lastNotificationId = notifications.get(notifications.size()-1).getId();
         }
         System.gc();
+    }
+    
+    private void refreshChat() {
+        show = false;
+        List<String> ids = new ArrayList<>();
+        for (Notification notification : messageNotifications) {
+            ids.add(notification.getLink());
+        }
+        messageList = messageService.getNotificatedMessages(ids.toArray(new String[0]));
+        for(Message message:messageList)
+        {
+            if(message.getSender().getId() != FriendListController.getSelectedUser() || FriendListController.getSelectedUser()==0)
+                show = true;
+            ChatController controller =  ChatListener.getChatListcontrollers().get(message.getSender());
+            if(controller != null)
+                controller.addToChat(message);
+        }
     }
     
     private void fillLists()
@@ -241,7 +262,7 @@ public class NotificationController extends Controller {
     {
         acceptItemsList.removeAll();
         Container topChild = new Container(BoxLayout.x());
-        topChild.add(new Label("Notifications des Messages:"));
+        topChild.add(new Label("Notifications des Accepts:"));
         acceptItemsList.add(topChild);
         for(Notification notification:acceptNotifications)
             acceptItemsList.add(acceptNotificationItem(notification));

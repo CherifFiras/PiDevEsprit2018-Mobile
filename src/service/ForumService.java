@@ -12,6 +12,7 @@ import com.codename1.io.ConnectionRequest;
 import com.codename1.io.JSONParser;
 import com.codename1.io.NetworkEvent;
 import com.codename1.io.NetworkManager;
+import com.codename1.main.Controller;
 import com.codename1.ui.events.ActionListener;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -27,7 +28,7 @@ public class ForumService {
      public ArrayList<Category> getList2() {
         ArrayList<Category> listTasks = new ArrayList<>();
         ConnectionRequest con = new ConnectionRequest();
-        con.setUrl("http://127.0.0.1/piIntegration/web/app_dev.php/forum/forum/getall");
+        con.setUrl(Controller.ip+"/piIntegration/web/app_dev.php/forum/forum/getall");
         con.addResponseListener(new ActionListener<NetworkEvent>() {
             @Override
             public void actionPerformed(NetworkEvent evt) {
@@ -65,7 +66,7 @@ public class ForumService {
         
          ArrayList<User> listTasks = new ArrayList<>();
         ConnectionRequest con = new ConnectionRequest();
-        con.setUrl("http://localhost/piIntegration/web/app_dev.php/forum/user/forgot/"+email);
+        con.setUrl(Controller.ip+"/piIntegration/web/app_dev.php/forum/user/forgot/"+email);
         con.addResponseListener(new ActionListener<NetworkEvent>() {
             @Override
             public void actionPerformed(NetworkEvent evt) {

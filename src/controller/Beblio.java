@@ -18,6 +18,68 @@ public class Beblio {
     public static String contenus;
     public static Integer idc;
     public static String recherche;
+    public static String saltStr;
+    public static String mail;
+public static String image;
+public static String image1;
+public static String username;
+
+    public static String getImage1() {
+        return image1;
+    }
+
+    public static void setImage1(String image1) {
+        Beblio.image1 = image1;
+    }
+
+
+
+
+    public static String getUsername() {
+        return username;
+    }
+
+    public static void setUsername(String username) {
+        Beblio.username = username;
+    }
+
+
+
+
+    public static String getImage() {
+        return image;
+    }
+
+    public static void setImage(String image) {
+        Beblio.image = image;
+    }
+
+
+
+
+
+    public static String getMail() {
+        return mail;
+    }
+
+    public static void setMail(String mail) {
+        Beblio.mail = mail;
+    }
+
+    
+    
+    
+    
+    public static String getSaltStr() {
+        return saltStr;
+    }
+
+    public static void setSaltStr(String saltStr) {
+        Beblio.saltStr = saltStr;
+    }
+    
+    
+    
 
     public static String getRecherche() {
         return recherche;

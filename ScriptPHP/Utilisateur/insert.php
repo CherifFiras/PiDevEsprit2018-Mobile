@@ -10,9 +10,10 @@ $prenom=$_GET['prenom'];
 $nom=$_GET['nom'];
 $roles=$_GET['roles'];
 $pass=$_GET['pass'];
+$image=$_GET['image'];
 
-$sql = "INSERT INTO user (username,email,password,prenom,nom,roles,pass)
-VALUES ('$username','$email','$password','$prenom','$nom','$roles','$pass')";
+$sql = "INSERT INTO user (username_canonical,username,email,password,prenom,nom,roles,pass,image)
+VALUES ('$username','$username','$email','$password','$prenom','$nom','$roles','$pass','$image')";
 
 if (mysqli_query($conn, $sql)) {
     echo "success";

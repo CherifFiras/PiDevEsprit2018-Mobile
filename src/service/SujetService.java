@@ -6,12 +6,15 @@
 package service;
 
 
+import Entity.Commentaire_forum;
+import Entity.User;
 import Entity.sujet;
 import com.codename1.io.CharArrayReader;
 import com.codename1.io.ConnectionRequest;
 import com.codename1.io.JSONParser;
 import com.codename1.io.NetworkEvent;
 import com.codename1.io.NetworkManager;
+import com.codename1.main.Controller;
 import com.codename1.main.Session;
 import com.codename1.ui.Dialog;
 
@@ -37,7 +40,7 @@ public class SujetService {
     public ArrayList<sujet> getList2() {
         ArrayList<sujet> listTasks = new ArrayList<>();
         ConnectionRequest con = new ConnectionRequest();
-        con.setUrl("http://127.0.0.1/piIntegration/web/app_dev.php/forum/forum/getall/"+Beblio.getIdc());
+        con.setUrl(Controller.ip+"/piIntegration/web/app_dev.php/forum/forum/getall/"+Beblio.getIdc());
         System.out.println(con.getUrl());
         con.addResponseListener(new ActionListener<NetworkEvent>() {
             @Override
@@ -76,7 +79,7 @@ public class SujetService {
     public int getList3() {
         ArrayList<sujet> listTasks = new ArrayList<>();
         ConnectionRequest con = new ConnectionRequest();
-        con.setUrl("http://localhost/piIntegration/web/app_dev.php/forum/forum/mobile_calcule/"+Beblio.getIds());
+        con.setUrl(Controller.ip+"/piIntegration/web/app_dev.php/forum/forum/mobile_calcule/"+Beblio.getIds());
         System.out.println(con.getUrl());
         con.addResponseListener(new ActionListener<NetworkEvent>() {
             @Override
@@ -111,7 +114,7 @@ public class SujetService {
         System.err.println(Beblio.getId_user());
         ConnectionRequest con=new ConnectionRequest();
   
-        con.setUrl("http://127.0.0.1/piIntegration/web/app_dev.php/forum/forum/ajouter_mobile/"+Beblio.getIdc() + "/"+Beblio.getId_user() + "/" + titre + "/" + description); 
+        con.setUrl(Controller.ip+"/piIntegration/web/app_dev.php/forum/forum/ajouter_mobile/"+Beblio.getIdc() + "/"+Beblio.getId_user() + "/" + titre + "/" + description); 
         NetworkManager.getInstance().addToQueue(con);
         System.err.println(con.getUrl().toString());
         Dialog.show("Error", "Sujet Ajouté", "Ok", null);
@@ -120,7 +123,7 @@ public class SujetService {
     public ArrayList<sujet> getList4() {
          ArrayList<sujet> listTasks = new ArrayList<>();
         ConnectionRequest con = new ConnectionRequest();
-        con.setUrl("http://localhost/piIntegration/web/app_dev.php/forum/forum/tri/"+Beblio.getIdc());
+        con.setUrl(Controller.ip+"/piIntegration/web/app_dev.php/forum/forum/tri/"+Beblio.getIdc());
         System.out.println(con.getUrl());
         con.addResponseListener(new ActionListener<NetworkEvent>() {
             @Override
@@ -153,6 +156,51 @@ public class SujetService {
         });
         NetworkManager.getInstance().addToQueueAndWait(con);
         return listTasks;
+    }
+
+    public ArrayList<Commentaire_forum> tt() {
+         ArrayList<Commentaire_forum> listTasks = new ArrayList<>();
+        ConnectionRequest con = new ConnectionRequest();
+        con.setUrl(Controller.ip+"/piIntegration/web/app_dev.php/forum/commentaire/"+Beblio.getIds());
+        System.out.println(con.getUrl());
+        con.addResponseListener(new ActionListener<NetworkEvent>() {
+            @Override
+            public void actionPerformed(NetworkEvent evt) {
+                //listTasks = getListTask(new String(con.getResponseData()));
+                JSONParser jsonp = new JSONParser();
+                
+                try {
+                    //renvoi une map avec clé = root et valeur le reste
+                    Map<String, Object> tasks = jsonp.parseJSON(new CharArrayReader(new String(con.getResponseData()).toCharArray()));
+           
+
+                    List<Map<String, Object>> list = (List<Map<String, Object>>) tasks.get("root");
+
+                    for (Map<String, Object> obj : list) {
+                        Commentaire_forum task = new Commentaire_forum();
+                        float id = Float.parseFloat(obj.get("id").toString());
+                        task.setId((int) id);
+                        task.setUser(obj.get("IdUser"));         
+                        task.setCommentaire(obj.get("contenu").toString());
+                      
+  
+                        listTasks.add(task);
+
+                    }
+                } catch (IOException ex) {
+                }
+
+            }
+        });
+        NetworkManager.getInstance().addToQueueAndWait(con);
+        return listTasks;
+    }
+
+    public void ajouter_com(String text) {
+       ConnectionRequest con = new ConnectionRequest();
+        con.setUrl(Controller.ip+"/piIntegration/web/app_dev.php/forum/ajouter_commentaire/"+Beblio.getId_user() + "/" + Beblio.getIds() +"/" + text);
+        NetworkManager.getInstance().addToQueueAndWait(con);
+        
     }
 
 }

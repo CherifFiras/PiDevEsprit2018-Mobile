@@ -27,6 +27,10 @@ public class ChatListener implements Runnable{
         this.user.setSalt("M");
     }
 
+    public static HashMap<User, ChatController> getChatListcontrollers() {
+        return chatListcontrollers;
+    }
+    
     public static void addController(ChatController controller)
     {
         chatListcontrollers.put(controller.getChatUser(), controller);
